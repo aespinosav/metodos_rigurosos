@@ -30,7 +30,7 @@ type U
                 end
             end
 
-        new([i for i in lista_intervalos])
+        clean_union!(new([i for i in lista_intervalos]))
     end
 end
 
@@ -188,7 +188,7 @@ end
 #            
 #            if overlapping_array[i, j]
 #                append(new_array)
-        
+
      
 function <(x::Interval, y::Interval)
     if x.upper < y.lower
@@ -198,15 +198,62 @@ function <(x::Interval, y::Interval)
     end
 end
 
+
 function >(x::Interval, y::Interval)
     if x.lower > y. upper
         return true
     else
         return false
     end
-end      
+end   
+
+function clean_union!(u::U)
+
+    lower_array = [i.lower for i in u.intervals]
+    index_array = sortperm(lower_array)
+
+    ordered_intervals = Inter[]
+    for i = index_array
+        append!(ordered_intervals, [u.intervals[i]])
+    end
+
+    change = true
+    while any(change)
 
 
+        clean_interval_list = Inter[]
+
+        change = Bool[]
+        for i = 1:length(ordered_intervals)
+
+            if i < length(ordered_intervals)
+                a = ordered_intervals[i]
+                b = ordered_intervals[i+1]
+
+                if overlap(a, b)
+                    append!(clean_interval_list, [hull(a,b)])
+                    append!(change, [true])
+
+                elseif i == 1
+                    append!(clean_interval_list, [a, b])
+
+                else
+                    append!(clean_interval_list, [b])
+                    append!(change, [false])
+
+                end
+
+            elseif !overlap(clean_interval_list[end], ordered_intervals[end])
+
+                append!(clean_interval_list, [ordered_intervals[end]])
+            end
+        end
+        ordered_intervals = copy(clean_interval_list)
+    end
+
+    u.intervals = ordered_intervals
+    print(ordered_intervals)
+end
 
     
     

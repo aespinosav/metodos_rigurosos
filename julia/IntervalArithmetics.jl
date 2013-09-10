@@ -1,4 +1,6 @@
-module IntervalArithmetics
+module IntervalArithmetics  
+
+include("./interval.jl")
 
 export
     Interval
@@ -9,7 +11,4 @@ export
     middle
     radius
     overlap
-    
-
-include("interval.jl")
 end
